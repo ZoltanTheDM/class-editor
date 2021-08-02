@@ -1,0 +1,16 @@
+{
+  "name": "class-editor",
+  "title": "Class Editor",
+  "description": "",
+  "author": "ZoltanTheDM",
+  "version": "0.1.0",
+  "esmodules": ["scripts/classEditor.js"],
+  "styles": ["styles/style.css"],
+  "minimumCoreVersion": "0.8.8",
+  "compatibleCoreVersion": "0.8.8",
+  "system": "dnd5e",
+  "url": "",
+  "manifest": "",
+  "download": "",
+  "changelog": ""
+}

@@ -1,0 +1,33 @@
+<div>
+    <div class = "form-class-editor">
+        <h2>Lets get classy</h2>
+
+        <select id="sel.classes" class="class-list" >
+            {{#each classes}}
+                <option value="{{value}}" {{isSelected}}>{{label}}</option>
+            {{/each}}
+        </select>
+
+        <select id="sel.subclasses" class="subclass-list">
+            <option value="">---</option>
+            {{#each subclasses}}
+                <option value="{{value}}" {{isSelected}}>{{label}}</option>
+            {{/each}}
+        </select>
+
+        <ol class="autolevel-list">
+            {{#each levelList as |section|}}
+                <li>
+                Level {{section.level}} you get:
+                <ol>
+                    {{#each section.features as |feature|}}
+                    <li>
+                        {{feature.name}}
+                    </li>
+                    {{/each}}
+                </ol>
+                </li>
+            {{/each}}
+        </ol>
+    </div>
+</div>

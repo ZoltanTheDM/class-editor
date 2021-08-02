@@ -1,0 +1,14 @@
+button.cl-editor {
+    flex-shrink: 1 !important; 
+    flex: unset !important;
+    margin: 5px 4px 0px 3px !important;
+    clear: both;
+}
+
+#cl-edit .form-group {
+    margin: 10px
+}
+
+#cl-edit .window-content {
+    overflow: unset
+}
