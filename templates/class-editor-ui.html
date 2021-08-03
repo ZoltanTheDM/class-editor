@@ -22,7 +22,8 @@
                 <ol>
                     {{#each section.features as |feature|}}
                     <li>
-                        {{feature.name}}
+                        {{feature.data.name}}
+                        <button class="remove-feature" id="del-{{section.level}}-{{feature.idx}}" >delete</button>
                     </li>
                     {{/each}}
                 </ol>

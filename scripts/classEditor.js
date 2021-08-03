@@ -31,6 +31,7 @@ class ClassEditor extends Application{
 	}
 
 	static saveClassFeatures(){
+		CONFIG.DND5E.classFeatures = ClassEditor.classFeatures;
 		game.settings.set(STORAGE_MODULE_NAME, CLASS_STORAGE, ClassEditor.classFeatures);
 	}
 
@@ -104,7 +105,13 @@ class ClassEditor extends Application{
 		for (let i = 1; i <= MAX_LEVEL ; i++){
 			list[i] = {
 				level: i,
-				features: await Promise.all((allFeatures[i] || []).map(fromUuid))
+				features: await Promise.all((allFeatures[i] || []).map(async (data, idx)=>{
+					return {
+						data: await fromUuid(data),
+						idx: idx,
+					}
+				}
+				))
 			};
 		}
 
@@ -126,7 +133,7 @@ class ClassEditor extends Application{
 			console.warn(`can't add ${data} because it is not an Item`);
 			return;
 		}
-		
+
 		let features;
 		if (ClassEditor.currentSubclass == ""){
 			features = ClassEditor.classFeatures[ClassEditor.currentClass]["features"];
@@ -145,6 +152,14 @@ class ClassEditor extends Application{
 		}
 
 		features[level].push(ClassEditor.makeUuid(data));
+
+		ClassEditor.saveClassFeatures();
+	}
+
+	static removeItem(level, idx){
+		let features = ClassEditor.getFeatureList();
+
+		features[level].splice(idx, 1);
 
 		ClassEditor.saveClassFeatures();
 	}
@@ -186,5 +201,14 @@ class ClassEditor extends Application{
 			this.render();
 		}.bind(this));
 
+		let deleteButtons = html.find(".remove-feature");
+
+		deleteButtons.on("click", null, function(ev){
+			let deletingRegex = ev.target.id.match(/del-(\d+)-(\d+)/);
+
+			ClassEditor.removeItem(parseInt(deletingRegex[1]), parseInt(deletingRegex[2]));
+
+			this.render();
+		}.bind(this));
 	}
 }
