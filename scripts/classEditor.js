@@ -1,6 +1,6 @@
 
 const CLASS_STORAGE = "stored-classes";
-const MODULE_NAME = "class-exposure";
+const STORAGE_MODULE_NAME = "class-exposure";
 
 const MAX_LEVEL = 20;
 
@@ -25,9 +25,13 @@ class ClassEditor extends Application{
 	static currentSubclass;
 
 	static getClassFeatures(){
-		ClassEditor.classFeatures = game.settings.get(MODULE_NAME, CLASS_STORAGE);
+		ClassEditor.classFeatures = game.settings.get(STORAGE_MODULE_NAME, CLASS_STORAGE);
 		ClassEditor.currentClass = Object.keys(ClassEditor.classFeatures)[0];
 		ClassEditor.currentSubclass = "";
+	}
+
+	static saveClassFeatures(){
+		game.settings.set(STORAGE_MODULE_NAME, CLASS_STORAGE, ClassEditor.classFeatures);
 	}
 
 	static get defaultOptions()
@@ -107,33 +111,80 @@ class ClassEditor extends Application{
 		return await list;
 	}
 
-	activateListeners(html) {
+	static makeUuid(data){
+		if ("pack" in data){
+			//is from compendium
+			return `Compendium.${data["pack"]}.${data["id"]}`;
+		}
 
-		//uses fromUuid to get items from string
-		//string Uses {Compendium}.{from game.packs}.{item id}
+		//it is an item from the world
+		return `Item.${data["id"]}`;
+	}
+
+	static addToClass(level, data){
+		if (data["type"] != "Item"){
+			console.warn(`can't add ${data} because it is not an Item`);
+			return;
+		}
+		
+		let features;
+		if (ClassEditor.currentSubclass == ""){
+			features = ClassEditor.classFeatures[ClassEditor.currentClass]["features"];
+		}
+		else{
+			if (!("features" in ClassEditor.classFeatures[ClassEditor.currentClass]["subclasses"][ClassEditor.currentSubclass])){
+				ClassEditor.classFeatures[ClassEditor.currentClass]["subclasses"][ClassEditor.currentSubclass]["features"] = {};
+			}
+
+			//some subclasses dont have features field by default
+			features = ClassEditor.classFeatures[ClassEditor.currentClass]["subclasses"][ClassEditor.currentSubclass]["features"];
+		}
+
+		if (!(level in features)){
+			features[level] = [];
+		}
+
+		features[level].push(ClassEditor.makeUuid(data));
+
+		ClassEditor.saveClassFeatures();
+	}
+
+	activateListeners(html) {
 
 		super.activateListeners(html);
 		this.currentValue = "barbarian";
 
 		let classes = html.find(".class-list");
 
-		classes.on("change", null, function (argument) {
+		//change class drop down
+		classes.on("change", null, function () {
 			ClassEditor.currentClass = document.getElementById("sel.classes").value;
+			//reset current subclass to none
 			ClassEditor.currentSubclass = "";
 			this.render();
 		}.bind(this));
 
+		//change subclass dropdown
 		let subclasses = html.find(".subclass-list");
 
-		subclasses.on("change", null, function (argument) {
+		subclasses.on("change", null, function () {
 			ClassEditor.currentSubclass = document.getElementById("sel.subclasses").value;
 			this.render();
 		}.bind(this));
 
+		//drag and drop functionality
+		let levelSections = html.find(".level-section");
 
-		// for (let key of Object.entries(ClassEditor.classFeatures)){
-		// 	console.log(key[0]);
-		// 	classDropDown.add(new Option(key[0]+"2", key[0]+"2"));
-		// }
+		levelSections.on("drop", null, function(ev){
+			let level = ev.currentTarget.id.match(/class-level-(\d+)/)[1]
+
+			ClassEditor.addToClass(
+				level,
+				JSON.parse(ev.originalEvent.dataTransfer.getData("Text"))
+			);
+
+			this.render();
+		}.bind(this));
+
 	}
 }

@@ -17,7 +17,7 @@
 
         <ol class="autolevel-list">
             {{#each levelList as |section|}}
-                <li>
+                <li class="level-section" id="class-level-{{section.level}}" >
                 Level {{section.level}} you get:
                 <ol>
                     {{#each section.features as |feature|}}
