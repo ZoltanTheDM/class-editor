@@ -1,24 +1,37 @@
 
 const CLASS_STORAGE = "stored-classes";
 const STORAGE_MODULE_NAME = "class-exposure";
+const MODULE_NAME = "class-editor";
+const MODULE_LABEL = "Class Editor";
+const MAX_LEVEL_NAME = "MaxLevel";
 
-const MAX_LEVEL = 20;
+Hooks.on("init", async(app, hmtl) => {
+	game.settings.registerMenu(MODULE_NAME, "FormData", {
+		name: "Edit Class Auto-Leveling",
+		hint: "Go to dialog to edit which items class and subclass recieve on level up",
+		label: "Edit Class Leveling",
+		icon: 'fas fa-atlas',
+		type: ClassEditor,
+		restricted: true,
+	});
 
-// Set up the user interface
-Hooks.on("renderSidebarTab", async (app, html) => {
-	if (app.options.id == "actors") {
-		let button = $("<button class='cl-editor'>Edit Classes</button>")
+	game.settings.register(MODULE_NAME, MAX_LEVEL_NAME, {
+		name: 'Max Level',
+		hint: "Must 'Save Changes' for this setting it to take effect. Only enter numbers please.",
+		scope: 'world',
+		config: true,
+		type: Number,
+		default: 20,
+		restricted: true
+	});
 
-		button.click(function () {
-			ClassEditor.getClassFeatures();
-			new ClassEditor().render(true);
-		});
+})
 
-		html.find(".directory-footer").append(button);
+class ClassEditor extends FormApplication{
+	constructor() {
+		super({});
+		ClassEditor.getClassFeatures();
 	}
-});
-
-class ClassEditor extends Application{
 
 	static classFeatures;
 	static currentClass;
@@ -31,22 +44,23 @@ class ClassEditor extends Application{
 	}
 
 	static saveClassFeatures(){
+		console.log(`${MODULE_LABEL} | Saving class leveling`);
 		CONFIG.DND5E.classFeatures = ClassEditor.classFeatures;
 		game.settings.set(STORAGE_MODULE_NAME, CLASS_STORAGE, ClassEditor.classFeatures);
 	}
 
 	static get defaultOptions()
 	{
-		const options = super.defaultOptions;
-		options.id = "class-editor";
-		options.template = "modules/class-editor/templates/class-editor-ui.html"
-		// options.classes.push("class-editor");
-		options.resizable = true;
-		options.height = "auto";
-		options.width = 600;
-		options.minimizable = true;
-		options.title = "Class Editor"
-		return options;
+		let overrides = {
+			id: "class-editor",
+			template: "modules/class-editor/templates/class-editor-ui.html",
+			resizable: true,
+			width: 600,
+			id: 'ce-class-editor',
+			minimizable: true,
+			title: "Class Editor,"
+		}
+		return foundry.utils.mergeObject(super.defaultOptions, overrides);;
 	}
 
 	async getData(options) {
@@ -102,7 +116,8 @@ class ClassEditor extends Application{
 
 		const allFeatures = ClassEditor.getFeatureList();
 
-		for (let i = 1; i <= MAX_LEVEL ; i++){
+		const level = parseInt(game.settings.get(MODULE_NAME, MAX_LEVEL_NAME));
+		for (let i = 1; i <= level ; i++){
 			list[i] = {
 				level: i,
 				features: await Promise.all((allFeatures[i] || []).map(async (data, idx)=>{
@@ -168,7 +183,6 @@ class ClassEditor extends Application{
 	activateListeners(html) {
 
 		super.activateListeners(html);
-		this.currentValue = "barbarian";
 
 		let classes = html.find(".class-list");
 
