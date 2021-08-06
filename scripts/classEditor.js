@@ -2,7 +2,7 @@
 const CLASS_STORAGE = "stored-classes";
 const STORAGE_MODULE_NAME = "class-exposure";
 const MODULE_NAME = "class-editor";
-const MODULE_LABEL = "Class Editor";
+const MODULE_LABEL = "Class Leveling Editor";
 const MAX_LEVEL_NAME = "MaxLevel";
 
 Hooks.on("init", async(app, hmtl) => {
@@ -58,7 +58,7 @@ class ClassEditor extends FormApplication{
 			width: 600,
 			id: 'ce-class-editor',
 			minimizable: true,
-			title: "Class Editor,"
+			title: "Class Leveling Editor",
 		}
 		return foundry.utils.mergeObject(super.defaultOptions, overrides);;
 	}
