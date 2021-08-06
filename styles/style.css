@@ -12,3 +12,48 @@ button.cl-editor {
 #cl-edit .window-content {
     overflow: unset
 }
+
+.item-list .item{
+  border: 1px solid #c9c7b8;
+  padding: 5px;
+}
+
+.item-list {
+  padding: 0;
+  list-style: none;
+}
+
+.item-header {
+	padding: 0;
+}
+
+.item-header {
+  padding-left: 0;
+  font-size: 20px;
+  text-align: left;
+  font-size: 16px;
+}
+
+.item-controls {
+  flex: 0 0 44px;
+}
+
+.autolevel-list h3 {
+  height: 28px;
+  font-weight: 700;
+  font-family: "Modesto Condensed", "Palatino Linotype", serif;
+  margin: 2px 0;
+  padding: 5px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px groove #eeede0;
+  font-weight: bold;
+}
+
+.item-image {
+  flex: 0 0 30px;
+  height: 30px;
+  background-size: 30px;
+  border: none;
+  margin-right: 5px;
+}

@@ -12,5 +12,10 @@
   "url": "",
   "manifest": "",
   "download": "",
-  "changelog": ""
+  "dependencies" : [
+    {
+      "name": "class-exposure",
+      "manifest": "https://raw.githubusercontent.com/ZoltanTheDM/Class-Exposure/1.0.0/module.json"
+    }
+  ]
 }

@@ -109,6 +109,7 @@ class ClassEditor extends Application{
 					return {
 						data: await fromUuid(data),
 						idx: idx,
+						uuid: data,
 					}
 				}
 				))
@@ -201,14 +202,19 @@ class ClassEditor extends Application{
 			this.render();
 		}.bind(this));
 
-		let deleteButtons = html.find(".remove-feature");
-
-		deleteButtons.on("click", null, function(ev){
-			let deletingRegex = ev.target.id.match(/del-(\d+)-(\d+)/);
+		html.find(".remove-feature").on("click", null, function(ev){
+			const id = ev.currentTarget.closest(".item").id
+			let deletingRegex = id.match(/item-(\d+)-(\d+)/);
 
 			ClassEditor.removeItem(parseInt(deletingRegex[1]), parseInt(deletingRegex[2]));
 
 			this.render();
+		}.bind(this));
+
+		html.find(".item-edit").on("click", null, async function(ev){
+			const li = event.currentTarget.closest(".item");
+			let item = await fromUuid(li.dataset.itemId);
+			item.sheet.render(true);
 		}.bind(this));
 	}
 }
