@@ -9,9 +9,9 @@
   "minimumCoreVersion": "0.8.8",
   "compatibleCoreVersion": "0.8.8",
   "system": "dnd5e",
-  "url": "",
-  "manifest": "",
-  "download": "",
+  "manifest": "https://raw.githubusercontent.com/ZoltanTheDM/class-editor/master/module.json",
+  "url": "https://github.com/ZoltanTheDM/class-editor",
+  "download": "https://github.com/ZoltanTheDM/class-editor/archive/refs/heads/master.zip",
   "dependencies" : [
     {
       "name": "class-exposure",
