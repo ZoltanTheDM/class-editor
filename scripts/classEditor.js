@@ -1,4 +1,6 @@
 
+import Utilts from "./Utilts.js";
+
 const CLASS_STORAGE = "stored-classes";
 const STORAGE_MODULE_NAME = "class-exposure";
 const MODULE_NAME = "class-editor";
@@ -23,6 +25,15 @@ Hooks.on("init", async(app, hmtl) => {
 		type: Number,
 		default: 20,
 		restricted: true
+	});
+
+	game.settings.registerMenu(MODULE_NAME, "ImportData", {
+		name: "Import/Export Data",
+		hint: "Go to dialog to import and export class leveling",
+		label: "Import/Export Leveling",
+		icon: 'fas fa-file-import',
+		type: ImportExporter,
+		restricted: true,
 	});
 
 })
@@ -230,5 +241,196 @@ class ClassEditor extends FormApplication{
 			let item = await fromUuid(li.dataset.itemId);
 			item.sheet.render(true);
 		}.bind(this));
+	}
+}
+
+class ImportExporter extends FormApplication{
+	constructor() {
+		super({});
+		this.currentValues = game.settings.get(STORAGE_MODULE_NAME, CLASS_STORAGE);
+	}
+
+	static get defaultOptions()
+	{
+		let overrides = {
+			id: "class-importer",
+			template: "modules/class-editor/templates/import-export.html",
+			resizable: true,
+			width: 600,
+			id: 'ce-class-editor-import',
+			minimizable: true,
+			title: "Class Leveling Import/Exporter",
+		}
+		return foundry.utils.mergeObject(super.defaultOptions, overrides);
+	}
+
+	async getData(options) {
+	}
+
+	activateListeners(html) {
+		super.activateListeners(html);
+
+		//export by copying text area
+		document.getElementById("import-exporter").value = JSON.stringify(this.currentValues, null, 2);
+	}
+
+	async _updateObject(event, formData){
+		let dataToImport
+		try{
+			dataToImport = JSON.parse(formData["import-exporter"]);
+		}
+		catch(e){
+			console.error(e);
+            Utilts.notificationCreator('error', `failed to import because of issue with JSON formatting`);
+            return;
+		}
+
+		if (!await this.verifyDataFormat(dataToImport)){
+            Utilts.notificationCreator('error', `failed to import because data was malformed. Check console for reason(s)`);
+			return;
+		}
+
+		console.log(`${MODULE_LABEL} | Importing class leveling`);
+		CONFIG.DND5E.classFeatures = dataToImport;
+		game.settings.set(STORAGE_MODULE_NAME, CLASS_STORAGE, dataToImport);
+	}
+
+	//verify data format
+	async verifyDataFormat(data){
+
+		if (!(data instanceof Object)){
+			console.error(`json data must be an object`);
+			return false;
+		}
+
+		for (let key in data){
+			//Every key must be a string
+			if (typeof key !== "string"){
+				console.error(`class key (${key}) is not an instance of a string`);
+				return false;
+			}
+
+			//classes are all lower case
+			if (key != key.toLowerCase()){
+				console.error(`class key (${key}) is not all lowercase`);
+				return false;
+			}
+
+			//classes must not have white space
+			if (/\s/g.test(key)){
+				console.error(`class key (${key}) must not have whitespace`);
+				return false;
+			}
+
+			if (!("features" in data[key])){
+				console.error(`class key (${key}) does not have features field`);
+				return false;
+			}
+
+			if (!await this.verifyFeatures(data[key]["features"], `features in key (${key})`)){
+				return false;
+			}
+
+			if (!("subclasses" in data[key])){
+				console.error(`class key (${key}) does not have a subclasses field`);
+				return false;
+			}
+
+			if (!(data[key]["subclasses"] instanceof Object)){
+				console.error(`subclasses of key (${key}) must be an object`);
+				return false;
+			}
+
+			for (let subclass in data[key]["subclasses"]){
+				if(/[^a-z\-]/g.test(subclass)){
+					console.error(`subclass key (${subclass}) of class key (${key}) must only contain lower case letters and -`);
+					return false;
+				}
+
+				if (!(data[key]["subclasses"][subclass] instanceof Object)){
+					console.error(`subclass key (${subclass}) of class key (${key}) must be an object`);
+					return false;
+				}
+
+				if (!("label" in data[key]["subclasses"][subclass])){
+					console.error(`subclass key (${subclass}) of class key (${key}) must have a label`);
+					return false;
+				}
+
+				if (typeof data[key]["subclasses"][subclass]["label"] != "string"){
+					console.error(`subclass key (${subclass}) of class key (${key}) must have a label that is a string`);
+					return false;
+				}
+
+				//subclasses don't have to have features
+				//but if they do check if they are right
+				if ("features" in data[key]["subclasses"][subclass]){
+					if (!await this.verifyFeatures(data[key]["subclasses"][subclass]["features"], `features in subclass "${data[key]["subclasses"][subclass]["label"]}" in class key (${key})`)){
+						return false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+	async verifyFeatures(featuresObject, target){
+
+		if (!(featuresObject instanceof Object)){
+			console.error(`features of ${target} must be an object`);
+			return false;
+		}
+
+		function isIntGtZero(str) {
+			if (typeof str != "string") return false // we only process strings!  
+			return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+			       !isNaN(parseFloat(str)) && // ...and ensure strings of whitespace fail
+			       parseFloat(str) == parseInt(str) &&
+			       parseInt(str) > 0
+		}
+
+		for (let level in featuresObject){
+			if (!isIntGtZero(level)){
+				console.error(`level (${level}) of ${target} is not a string integer greater then 0`);
+				return false;
+			}
+
+			if (!(featuresObject[level] instanceof Array)){
+				console.error(`level (${level}) of ${target} is not an Array`);
+				return false;
+			}
+
+			//list of existing items
+			let tempArr = [];
+
+			for (let item of featuresObject[level]){
+				if (typeof item != "string"){
+					console.error(`in level (${level}) of ${target} has an item (${item}) that is not a string`);
+					return false;
+				}
+
+				let item5e;
+				try{
+					item5e = await fromUuid(item);
+				}
+				catch(e){
+				}
+
+				if (!item5e){
+					const message = `in level (${level}) of ${target} has an item (${item}) that we could not find. It will not be added to the list`
+					console.warn(message);
+            		Utilts.notificationCreator('warn', message);
+				}
+				else{
+					tempArr.push(item);
+				}
+			}
+
+			//good clean list of items
+			featuresObject[level] = tempArr;
+		}
+
+		return true;
 	}
 }
