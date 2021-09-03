@@ -5,31 +5,31 @@
             Drag and drop items to be automatically gained on level up.
         </p>
 
-        <select id="sel.classes" class="class-list" >
+        <select id="sel.classes" class="class-edit-qualifier class-list class-editor" >
             {{#each classes}}
                 <option value="{{value}}" {{isSelected}}>{{label}}</option>
             {{/each}}
         </select>
 
-        <select id="sel.subclasses" class="subclass-list">
+        <select id="sel.subclasses" class="class-edit-qualifier subclass-list class-editor">
             <option value="">---</option>
             {{#each subclasses}}
                 <option value="{{value}}" {{isSelected}}>{{label}}</option>
             {{/each}}
         </select>
 
-        <ol class="autolevel-list item-list">
+        <ol class="class-edit-qualifier autolevel-list item-list">
             {{#each levelList as |section|}}
-                <li class="level-section item-header" id="class-level-{{section.level}}" >
+                <li class="class-edit-qualifier level-section item-header" id="class-level-{{section.level}}" >
                 <h3>At Level {{section.level}} Gain:</h3>
-                <ol class="item-list">
+                <ol class="class-edit-qualifier item-list">
                     {{#each section.features as |feature|}}
-                    <li class="flexrow item" data-item-id="{{feature.uuid}}" id="item-{{section.level}}-{{feature.idx}}" >
-                        <div class="item-image" style="background-image: url('{{feature.data.img}}')"></div>
+                    <li class="class-edit-qualifier flexrow item" data-item-id="{{feature.uuid}}" id="item-{{section.level}}-{{feature.idx}}" >
+                        <div class="class-edit-qualifier item-image" style="background-image: url('{{feature.data.img}}')"></div>
                         <div>
                         {{feature.data.name}}
                         </div>
-                        <div class="item-controls flexrow">
+                        <div class="class-edit-qualifier item-controls flexrow">
                         <a class="item-edit" ><i class="fas fa-edit"></i></a>
                         <a class="remove-feature" ><i class="fas fa-trash"></i></a>
                         </div>
