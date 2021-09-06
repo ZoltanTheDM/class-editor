@@ -3,15 +3,15 @@
   "title": "Class Leveling Editor",
   "description": "",
   "author": "ZoltanTheDM",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "esmodules": ["scripts/classEditor.js"],
   "styles": [],
   "minimumCoreVersion": "0.8.8",
   "compatibleCoreVersion": "0.8.8",
   "system": "dnd5e",
-  "manifest": "https://raw.githubusercontent.com/ZoltanTheDM/class-editor/0.4.1/module.json",
+  "manifest": "https://raw.githubusercontent.com/ZoltanTheDM/class-editor/0.5.0/module.json",
   "url": "https://github.com/ZoltanTheDM/class-editor",
-  "download": "https://github.com/ZoltanTheDM/class-editor/archive/0.4.1.zip",
+  "download": "https://github.com/ZoltanTheDM/class-editor/archive/0.5.0.zip",
   "dependencies" : [
     {
       "name": "class-exposure",
