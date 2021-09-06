@@ -1,24 +1,9 @@
-button.cl-editor {
-    flex-shrink: 1 !important; 
-    flex: unset !important;
-    margin: 5px 4px 0px 3px !important;
-    clear: both;
-}
 
-#cl-edit .form-group {
-    margin: 10px
-}
-
-#cl-edit .window-content {
-    overflow: unset
-}
-
-.class-edit-qualifier .item-list .item{
+.class-edit-qualifier.item{
   border: 1px solid #c9c7b8;
-  padding: 5px;
 }
 
-.class-edit-qualifier .item-list {
+.class-edit-qualifier.item-list {
   padding: 0;
   padding-left: 0;
   margin: 0;
@@ -26,7 +11,7 @@ button.cl-editor {
   list-style: none;
 }
 
-.class-edit-qualifier .item-header {
+.class-edit-qualifier.item-header {
   list-style: none;
   padding: 0;
   padding-left: 0;
@@ -35,8 +20,9 @@ button.cl-editor {
   font-size: 16px;
 }
 
-.class-edit-qualifier .item-controls {
+.class-edit-qualifier.item-controls {
   flex: 0 0 44px;
+  align-items: center;
 }
 
 .class-edit-qualifier h3 {
@@ -51,7 +37,7 @@ button.cl-editor {
   font-weight: bold;
 }
 
-.class-edit-qualifier .item-image {
+.class-edit-qualifier.item-image {
   flex: 0 0 30px;
   height: 30px;
   background-size: 30px;
