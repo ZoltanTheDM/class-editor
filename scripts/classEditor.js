@@ -1,6 +1,4 @@
 
-import Utilts from "./Utilts.js";
-
 const CLASS_STORAGE = "stored-classes";
 const STORAGE_MODULE_NAME = "class-exposure";
 const MODULE_NAME = "class-editor";
@@ -281,12 +279,12 @@ class ImportExporter extends FormApplication{
 		}
 		catch(e){
 			console.error(e);
-            Utilts.notificationCreator('error', `failed to import because of issue with JSON formatting`);
-            return;
+			ui.notifications.error(`failed to import because of issue with JSON formatting`);
+			return;
 		}
 
 		if (!await this.verifyDataFormat(dataToImport)){
-            Utilts.notificationCreator('error', `failed to import because data was malformed. Check console for reason(s)`);
+			ui.notifications.error(`failed to import because data was malformed. Check console for reason(s)`);
 			return;
 		}
 
@@ -420,7 +418,7 @@ class ImportExporter extends FormApplication{
 				if (!item5e){
 					const message = `in level (${level}) of ${target} has an item (${item}) that we could not find. It will not be added to the list`
 					console.warn(message);
-            		Utilts.notificationCreator('warn', message);
+					ui.notifications.warn(message);
 				}
 				else{
 					tempArr.push(item);

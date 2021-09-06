@@ -17,4 +17,3 @@ This works for version 1.4.1 of the DnD5e system. Hopefully someday this will be
 ## TODO
 
 * Add support for adding and removing classes and subclasses
-* Improve the css

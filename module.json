@@ -5,7 +5,7 @@
   "author": "ZoltanTheDM",
   "version": "0.4.1",
   "esmodules": ["scripts/classEditor.js"],
-  "styles": ["styles/style.css"],
+  "styles": [],
   "minimumCoreVersion": "0.8.8",
   "compatibleCoreVersion": "0.8.8",
   "system": "dnd5e",
